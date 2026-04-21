@@ -1,6 +1,6 @@
-cmake_minimum_required(VERSION 3.16...3.25)
+cmake_minimum_required(VERSION 3.28...3.30)
 
-set(obs-websocket_VERSION 5.5.6)
+set(obs-websocket_VERSION 5.7.3)
 set(OBS_WEBSOCKET_RPC_VERSION 1)
 
 include(cmake/obs-websocket-api.cmake)
@@ -15,7 +15,7 @@ endif()
 find_package(Qt6 REQUIRED Core Widgets Svg Network)
 
 # Find nlohmann JSON
-find_package(nlohmann_json 3 REQUIRED)
+find_package(nlohmann_json 3.11 REQUIRED)
 
 # Find qrcodegencpp
 set(CMAKE_FIND_PACKAGE_PREFER_CONFIG ON)
@@ -61,6 +61,7 @@ target_sources(
   PRIVATE # cmake-format: sortable
           src/eventhandler/EventHandler.cpp
           src/eventhandler/EventHandler.h
+          src/eventhandler/EventHandler_Canvases.cpp
           src/eventhandler/EventHandler_Config.cpp
           src/eventhandler/EventHandler_Filters.cpp
           src/eventhandler/EventHandler_General.cpp
@@ -80,6 +81,7 @@ target_sources(
           src/requesthandler/RequestBatchHandler.h
           src/requesthandler/RequestHandler.cpp
           src/requesthandler/RequestHandler.h
+          src/requesthandler/RequestHandler_Canvases.cpp
           src/requesthandler/RequestHandler_Config.cpp
           src/requesthandler/RequestHandler_Filters.cpp
           src/requesthandler/RequestHandler_General.cpp

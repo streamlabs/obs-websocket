@@ -72,6 +72,9 @@ private:
 	RequestResult GetRecordDirectory(const Request &);
 	RequestResult SetRecordDirectory(const Request &);
 
+	// Canvases
+	RequestResult GetCanvasList(const Request &);
+
 	// Sources
 	RequestResult GetSourceActive(const Request &);
 	RequestResult GetSourceScreenshot(const Request &);
@@ -115,6 +118,10 @@ private:
 	RequestResult SetInputAudioMonitorType(const Request &);
 	RequestResult GetInputAudioTracks(const Request &);
 	RequestResult SetInputAudioTracks(const Request &);
+	RequestResult GetInputDeinterlaceMode(const Request &);
+	RequestResult SetInputDeinterlaceMode(const Request &);
+	RequestResult GetInputDeinterlaceFieldOrder(const Request &);
+	RequestResult SetInputDeinterlaceFieldOrder(const Request &);
 	RequestResult GetInputPropertiesListPropertyItems(const Request &);
 	RequestResult PressInputPropertiesButton(const Request &);
 

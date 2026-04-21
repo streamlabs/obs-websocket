@@ -76,6 +76,10 @@ private:
 	static void SourceRemovedMultiHandler(void *param, calldata_t *data);
 	static void SourceRenamedMultiHandler(void *param, calldata_t *data);
 	static void SourceUpdatedMultiHandler(void *param, calldata_t *data);
+	static void CanvasCreatedMultiHandler(void *param, calldata_t *data);
+	static void CanvasDestroyedMultiHandler(void *param, calldata_t *data);
+	static void CanvasRemovedMultiHandler(void *param, calldata_t *data);
+	static void CanvasRenamedMultiHandler(void *param, calldata_t *data);
 
 	// Signal handler: media sources
 	static void SourceMediaPauseMultiHandler(void *param, calldata_t *data);
@@ -99,6 +103,11 @@ private:
 	void HandleCurrentProfileChanging();
 	void HandleCurrentProfileChanged();
 	void HandleProfileListChanged();
+
+	// Canvases
+	void HandleCanvasCreated(obs_canvas_t *canvas);
+	void HandleCanvasRemoved(obs_canvas_t *canvas);
+	void HandleCanvasNameChanged(obs_canvas_t *canvas, std::string oldCanvasName, std::string canvasName);
 
 	// Scenes
 	void HandleSceneCreated(obs_source_t *source);
@@ -129,7 +138,7 @@ private:
 						  calldata_t *data); // Direct callback
 	static void HandleInputAudioMonitorTypeChanged(void *param,
 						       calldata_t *data); // Direct callback
-	void HandleInputVolumeMeters(std::vector<json> inputs);           // AudioMeter::Handler callback
+	void HandleInputVolumeMeters(std::vector<json> &inputs);          // AudioMeter::Handler callback
 
 	// Transitions
 	void HandleCurrentSceneTransitionChanged();
