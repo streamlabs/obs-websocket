@@ -123,6 +123,7 @@ RequestResult RequestHandler::GetSpecialInputs(const Request &)
 /**
  * Creates a new input, adding it as a scene item to the specified scene.
  *
+ * @requestField ?canvasUuid       | String | UUID of the canvas the scene is in, if using the sceneName field
  * @requestField ?sceneName        | String | Name of the scene to add the input to as a scene item
  * @requestField ?sceneUuid        | String | UUID of the scene to add the input to as a scene item
  * @requestField inputName         | String | Name of the new input to created
@@ -144,7 +145,7 @@ RequestResult RequestHandler::CreateInput(const Request &request)
 {
 	RequestStatus::RequestStatus statusCode;
 	std::string comment;
-	OBSSourceAutoRelease sceneSource = request.ValidateScene(statusCode, comment);
+	OBSSourceAutoRelease sceneSource = request.AcquireScene(statusCode, comment);
 	if (!(sceneSource && request.ValidateString("inputName", statusCode, comment) &&
 	      request.ValidateString("inputKind", statusCode, comment)))
 		return RequestResult::Error(statusCode, comment);
@@ -211,7 +212,7 @@ RequestResult RequestHandler::RemoveInput(const Request &request)
 {
 	RequestStatus::RequestStatus statusCode;
 	std::string comment;
-	OBSSourceAutoRelease input = request.ValidateInput(statusCode, comment);
+	OBSSourceAutoRelease input = request.AcquireInput(statusCode, comment);
 	if (!input)
 		return RequestResult::Error(statusCode, comment);
 
@@ -241,7 +242,7 @@ RequestResult RequestHandler::SetInputName(const Request &request)
 {
 	RequestStatus::RequestStatus statusCode;
 	std::string comment;
-	OBSSourceAutoRelease input = request.ValidateInput(statusCode, comment);
+	OBSSourceAutoRelease input = request.AcquireInput(statusCode, comment);
 	if (!(input && request.ValidateString("newInputName", statusCode, comment)))
 		return RequestResult::Error(statusCode, comment);
 
@@ -314,7 +315,7 @@ RequestResult RequestHandler::GetInputSettings(const Request &request)
 {
 	RequestStatus::RequestStatus statusCode;
 	std::string comment;
-	OBSSourceAutoRelease input = request.ValidateInput(statusCode, comment);
+	OBSSourceAutoRelease input = request.AcquireInput(statusCode, comment);
 	if (!input)
 		return RequestResult::Error(statusCode, comment);
 
@@ -345,7 +346,7 @@ RequestResult RequestHandler::SetInputSettings(const Request &request)
 {
 	RequestStatus::RequestStatus statusCode;
 	std::string comment;
-	OBSSourceAutoRelease input = request.ValidateInput(statusCode, comment);
+	OBSSourceAutoRelease input = request.AcquireInput(statusCode, comment);
 	if (!(input && request.ValidateObject("inputSettings", statusCode, comment, true)))
 		return RequestResult::Error(statusCode, comment);
 
@@ -396,7 +397,7 @@ RequestResult RequestHandler::GetInputMute(const Request &request)
 {
 	RequestStatus::RequestStatus statusCode;
 	std::string comment;
-	OBSSourceAutoRelease input = request.ValidateInput(statusCode, comment);
+	OBSSourceAutoRelease input = request.AcquireInput(statusCode, comment);
 	if (!input)
 		return RequestResult::Error(statusCode, comment);
 
@@ -426,7 +427,7 @@ RequestResult RequestHandler::SetInputMute(const Request &request)
 {
 	RequestStatus::RequestStatus statusCode;
 	std::string comment;
-	OBSSourceAutoRelease input = request.ValidateInput(statusCode, comment);
+	OBSSourceAutoRelease input = request.AcquireInput(statusCode, comment);
 	if (!(input && request.ValidateBoolean("inputMuted", statusCode, comment)))
 		return RequestResult::Error(statusCode, comment);
 
@@ -457,7 +458,7 @@ RequestResult RequestHandler::ToggleInputMute(const Request &request)
 {
 	RequestStatus::RequestStatus statusCode;
 	std::string comment;
-	OBSSourceAutoRelease input = request.ValidateInput(statusCode, comment);
+	OBSSourceAutoRelease input = request.AcquireInput(statusCode, comment);
 	if (!input)
 		return RequestResult::Error(statusCode, comment);
 
@@ -492,7 +493,7 @@ RequestResult RequestHandler::GetInputVolume(const Request &request)
 {
 	RequestStatus::RequestStatus statusCode;
 	std::string comment;
-	OBSSourceAutoRelease input = request.ValidateInput(statusCode, comment);
+	OBSSourceAutoRelease input = request.AcquireInput(statusCode, comment);
 	if (!input)
 		return RequestResult::Error(statusCode, comment);
 
@@ -529,7 +530,7 @@ RequestResult RequestHandler::SetInputVolume(const Request &request)
 {
 	RequestStatus::RequestStatus statusCode;
 	std::string comment;
-	OBSSourceAutoRelease input = request.ValidateInput(statusCode, comment);
+	OBSSourceAutoRelease input = request.AcquireInput(statusCode, comment);
 	if (!input)
 		return RequestResult::Error(statusCode, comment);
 
@@ -580,7 +581,7 @@ RequestResult RequestHandler::GetInputAudioBalance(const Request &request)
 {
 	RequestStatus::RequestStatus statusCode;
 	std::string comment;
-	OBSSourceAutoRelease input = request.ValidateInput(statusCode, comment);
+	OBSSourceAutoRelease input = request.AcquireInput(statusCode, comment);
 	if (!input)
 		return RequestResult::Error(statusCode, comment);
 
@@ -611,7 +612,7 @@ RequestResult RequestHandler::SetInputAudioBalance(const Request &request)
 {
 	RequestStatus::RequestStatus statusCode;
 	std::string comment;
-	OBSSourceAutoRelease input = request.ValidateInput(statusCode, comment);
+	OBSSourceAutoRelease input = request.AcquireInput(statusCode, comment);
 	if (!(input && request.ValidateNumber("inputAudioBalance", statusCode, comment, 0.0, 1.0)))
 		return RequestResult::Error(statusCode, comment);
 
@@ -645,7 +646,7 @@ RequestResult RequestHandler::GetInputAudioSyncOffset(const Request &request)
 {
 	RequestStatus::RequestStatus statusCode;
 	std::string comment;
-	OBSSourceAutoRelease input = request.ValidateInput(statusCode, comment);
+	OBSSourceAutoRelease input = request.AcquireInput(statusCode, comment);
 	if (!input)
 		return RequestResult::Error(statusCode, comment);
 
@@ -677,7 +678,7 @@ RequestResult RequestHandler::SetInputAudioSyncOffset(const Request &request)
 {
 	RequestStatus::RequestStatus statusCode;
 	std::string comment;
-	OBSSourceAutoRelease input = request.ValidateInput(statusCode, comment);
+	OBSSourceAutoRelease input = request.AcquireInput(statusCode, comment);
 	if (!(input && request.ValidateNumber("inputAudioSyncOffset", statusCode, comment, -950, 20000)))
 		return RequestResult::Error(statusCode, comment);
 
@@ -715,7 +716,7 @@ RequestResult RequestHandler::GetInputAudioMonitorType(const Request &request)
 {
 	RequestStatus::RequestStatus statusCode;
 	std::string comment;
-	OBSSourceAutoRelease input = request.ValidateInput(statusCode, comment);
+	OBSSourceAutoRelease input = request.AcquireInput(statusCode, comment);
 	if (!input)
 		return RequestResult::Error(statusCode, comment);
 
@@ -746,7 +747,7 @@ RequestResult RequestHandler::SetInputAudioMonitorType(const Request &request)
 {
 	RequestStatus::RequestStatus statusCode;
 	std::string comment;
-	OBSSourceAutoRelease input = request.ValidateInput(statusCode, comment);
+	OBSSourceAutoRelease input = request.AcquireInput(statusCode, comment);
 	if (!(input && request.ValidateString("monitorType", statusCode, comment)))
 		return RequestResult::Error(statusCode, comment);
 
@@ -793,7 +794,7 @@ RequestResult RequestHandler::GetInputAudioTracks(const Request &request)
 {
 	RequestStatus::RequestStatus statusCode;
 	std::string comment;
-	OBSSourceAutoRelease input = request.ValidateInput(statusCode, comment);
+	OBSSourceAutoRelease input = request.AcquireInput(statusCode, comment);
 	if (!input)
 		return RequestResult::Error(statusCode, comment);
 
@@ -831,7 +832,7 @@ RequestResult RequestHandler::SetInputAudioTracks(const Request &request)
 {
 	RequestStatus::RequestStatus statusCode;
 	std::string comment;
-	OBSSourceAutoRelease input = request.ValidateInput(statusCode, comment);
+	OBSSourceAutoRelease input = request.AcquireInput(statusCode, comment);
 	if (!input || !request.ValidateObject("inputAudioTracks", statusCode, comment))
 		return RequestResult::Error(statusCode, comment);
 
@@ -867,6 +868,167 @@ RequestResult RequestHandler::SetInputAudioTracks(const Request &request)
 }
 
 /**
+ * Gets the deinterlace mode of an input.
+ *
+ * Deinterlace Modes:
+ *
+ * - `OBS_DEINTERLACE_MODE_DISABLE`
+ * - `OBS_DEINTERLACE_MODE_DISCARD`
+ * - `OBS_DEINTERLACE_MODE_RETRO`
+ * - `OBS_DEINTERLACE_MODE_BLEND`
+ * - `OBS_DEINTERLACE_MODE_BLEND_2X`
+ * - `OBS_DEINTERLACE_MODE_LINEAR`
+ * - `OBS_DEINTERLACE_MODE_LINEAR_2X`
+ * - `OBS_DEINTERLACE_MODE_YADIF`
+ * - `OBS_DEINTERLACE_MODE_YADIF_2X`
+ *
+ * Note: Deinterlacing functionality is restricted to async inputs only.
+ *
+ * @requestField ?inputName | String | Name of the input
+ * @requestField ?inputUuid | String | UUID of the input
+ *
+ * @responseField inputDeinterlaceMode | String | Deinterlace mode of the input
+ *
+ * @requestType GetInputDeinterlaceMode
+ * @complexity 2
+ * @rpcVersion -1
+ * @initialVersion 5.6.0
+ * @api requests
+ * @category inputs
+ */
+RequestResult RequestHandler::GetInputDeinterlaceMode(const Request &request)
+{
+	RequestStatus::RequestStatus statusCode;
+	std::string comment;
+	OBSSourceAutoRelease input = request.AcquireInput(statusCode, comment);
+	if (!input)
+		return RequestResult::Error(statusCode, comment);
+
+	if (!(obs_source_get_output_flags(input) & OBS_SOURCE_ASYNC))
+		return RequestResult::Error(RequestStatus::InvalidResourceState, "The specified input is not async.");
+
+	json responseData;
+	responseData["inputDeinterlaceMode"] = obs_source_get_deinterlace_mode(input);
+
+	return RequestResult::Success(responseData);
+}
+
+/**
+ * Sets the deinterlace mode of an input.
+ *
+ * Note: Deinterlacing functionality is restricted to async inputs only.
+ *
+ * @requestField ?inputName           | String | Name of the input
+ * @requestField ?inputUuid           | String | UUID of the input
+ * @requestField inputDeinterlaceMode | String | Deinterlace mode for the input
+ *
+ * @requestType SetInputDeinterlaceMode
+ * @complexity 2
+ * @rpcVersion -1
+ * @initialVersion 5.6.0
+ * @api requests
+ * @category inputs
+ */
+RequestResult RequestHandler::SetInputDeinterlaceMode(const Request &request)
+{
+	RequestStatus::RequestStatus statusCode;
+	std::string comment;
+	OBSSourceAutoRelease input = request.AcquireInput(statusCode, comment);
+	if (!input || !request.ValidateString("inputDeinterlaceMode", statusCode, comment))
+		return RequestResult::Error(statusCode, comment);
+
+	if (!(obs_source_get_output_flags(input) & OBS_SOURCE_ASYNC))
+		return RequestResult::Error(RequestStatus::InvalidResourceState, "The specified input is not async.");
+
+	enum obs_deinterlace_mode deinterlaceMode = request.RequestData["inputDeinterlaceMode"];
+	if (deinterlaceMode == OBS_DEINTERLACE_MODE_DISABLE &&
+	    request.RequestData["inputDeinterlaceMode"] != "OBS_DEINTERLACE_MODE_DISABLE")
+		return RequestResult::Error(RequestStatus::InvalidRequestField,
+					    "The field inputDeinterlaceMode has an invalid value.");
+
+	obs_source_set_deinterlace_mode(input, deinterlaceMode);
+
+	return RequestResult::Success();
+}
+
+/**
+ * Gets the deinterlace field order of an input.
+ *
+ * Deinterlace Field Orders:
+ *
+ * - `OBS_DEINTERLACE_FIELD_ORDER_TOP`
+ * - `OBS_DEINTERLACE_FIELD_ORDER_BOTTOM`
+ *
+ * Note: Deinterlacing functionality is restricted to async inputs only.
+ *
+ * @requestField ?inputName | String | Name of the input
+ * @requestField ?inputUuid | String | UUID of the input
+ *
+ * @responseField inputDeinterlaceFieldOrder | String | Deinterlace field order of the input
+ *
+ * @requestType GetInputDeinterlaceFieldOrder
+ * @complexity 2
+ * @rpcVersion -1
+ * @initialVersion 5.6.0
+ * @api requests
+ * @category inputs
+ */
+RequestResult RequestHandler::GetInputDeinterlaceFieldOrder(const Request &request)
+{
+	RequestStatus::RequestStatus statusCode;
+	std::string comment;
+	OBSSourceAutoRelease input = request.AcquireInput(statusCode, comment);
+	if (!input)
+		return RequestResult::Error(statusCode, comment);
+
+	if (!(obs_source_get_output_flags(input) & OBS_SOURCE_ASYNC))
+		return RequestResult::Error(RequestStatus::InvalidResourceState, "The specified input is not async.");
+
+	json responseData;
+	responseData["inputDeinterlaceFieldOrder"] = obs_source_get_deinterlace_field_order(input);
+
+	return RequestResult::Success(responseData);
+}
+
+/**
+ * Sets the deinterlace field order of an input.
+ *
+ * Note: Deinterlacing functionality is restricted to async inputs only.
+ *
+ * @requestField ?inputName                 | String | Name of the input
+ * @requestField ?inputUuid                 | String | UUID of the input
+ * @requestField inputDeinterlaceFieldOrder | String | Deinterlace field order for the input
+ *
+ * @requestType SetInputDeinterlaceFieldOrder
+ * @complexity 2
+ * @rpcVersion -1
+ * @initialVersion 5.6.0
+ * @api requests
+ * @category inputs
+ */
+RequestResult RequestHandler::SetInputDeinterlaceFieldOrder(const Request &request)
+{
+	RequestStatus::RequestStatus statusCode;
+	std::string comment;
+	OBSSourceAutoRelease input = request.AcquireInput(statusCode, comment);
+	if (!input || !request.ValidateString("inputDeinterlaceFieldOrder", statusCode, comment))
+		return RequestResult::Error(statusCode, comment);
+
+	if (!(obs_source_get_output_flags(input) & OBS_SOURCE_ASYNC))
+		return RequestResult::Error(RequestStatus::InvalidResourceState, "The specified input is not async.");
+
+	enum obs_deinterlace_field_order deinterlaceFieldOrder = request.RequestData["inputDeinterlaceFieldOrder"];
+	if (deinterlaceFieldOrder == OBS_DEINTERLACE_FIELD_ORDER_TOP &&
+	    request.RequestData["inputDeinterlaceFieldOrder"] != "OBS_DEINTERLACE_FIELD_ORDER_TOP")
+		return RequestResult::Error(RequestStatus::InvalidRequestField,
+					    "The field inputDeinterlaceFieldOrder has an invalid value.");
+
+	obs_source_set_deinterlace_field_order(input, deinterlaceFieldOrder);
+
+	return RequestResult::Success();
+}
+
+/**
  * Gets the items of a list property from an input's properties.
  *
  * Note: Use this in cases where an input provides a dynamic, selectable list of items. For example, display capture, where it provides a list of available displays.
@@ -888,7 +1050,7 @@ RequestResult RequestHandler::GetInputPropertiesListPropertyItems(const Request 
 {
 	RequestStatus::RequestStatus statusCode;
 	std::string comment;
-	OBSSourceAutoRelease input = request.ValidateInput(statusCode, comment);
+	OBSSourceAutoRelease input = request.AcquireInput(statusCode, comment);
 	if (!(input && request.ValidateString("propertyName", statusCode, comment)))
 		return RequestResult::Error(statusCode, comment);
 
@@ -931,7 +1093,7 @@ RequestResult RequestHandler::PressInputPropertiesButton(const Request &request)
 {
 	RequestStatus::RequestStatus statusCode;
 	std::string comment;
-	OBSSourceAutoRelease input = request.ValidateInput(statusCode, comment);
+	OBSSourceAutoRelease input = request.AcquireInput(statusCode, comment);
 	if (!(input && request.ValidateString("propertyName", statusCode, comment)))
 		return RequestResult::Error(statusCode, comment);
 
