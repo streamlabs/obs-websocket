@@ -48,6 +48,18 @@ SettingsDialog::SettingsDialog(QWidget *parent)
 	ui->websocketSessionTable->horizontalHeader()->resizeSection(3, 100); // Resize Session Table column widths
 	ui->websocketSessionTable->horizontalHeader()->resizeSection(4, 100);
 
+	if (obs_frontend_is_safe_mode_enabled()) {
+		QFrame *safeModeFrame = new QFrame(this);
+		safeModeFrame->setProperty("class", "frame-notice");
+
+		safeModeFrame->setLayout(new QHBoxLayout);
+		safeModeFrame->layout()->setContentsMargins(0, 0, 0, 0);
+		QLabel *safeModeText = new QLabel(obs_module_text("OBSWebSocket.Settings.SafeModeWarning"), safeModeFrame);
+		safeModeText->setWordWrap(true);
+		safeModeFrame->layout()->addWidget(safeModeText);
+		ui->verticalLayout->insertWidget(0, safeModeFrame);
+	}
+
 	// Remove the ? button on dialogs on Windows
 	setWindowFlags(windowFlags() & ~Qt::WindowContextHelpButtonHint);
 
@@ -56,13 +68,8 @@ SettingsDialog::SettingsDialog(QWidget *parent)
 
 	connect(sessionTableTimer, &QTimer::timeout, this, &SettingsDialog::FillSessionTable);
 	connect(ui->buttonBox, &QDialogButtonBox::clicked, this, &SettingsDialog::DialogButtonClicked);
-#if QT_VERSION >= QT_VERSION_CHECK(6, 7, 0)
 	connect(ui->enableAuthenticationCheckBox, &QCheckBox::checkStateChanged, this,
 		&SettingsDialog::EnableAuthenticationCheckBoxChanged);
-#else
-	connect(ui->enableAuthenticationCheckBox, &QCheckBox::stateChanged, this,
-		&SettingsDialog::EnableAuthenticationCheckBoxChanged);
-#endif
 	connect(ui->generatePasswordButton, &QPushButton::clicked, this, &SettingsDialog::GeneratePasswordButtonClicked);
 	connect(ui->showConnectInfoButton, &QPushButton::clicked, this, &SettingsDialog::ShowConnectInfoButtonClicked);
 	connect(ui->serverPasswordLineEdit, &QLineEdit::textEdited, this, &SettingsDialog::PasswordEdited);
@@ -123,7 +130,11 @@ void SettingsDialog::RefreshData()
 		return;
 	}
 
-	ui->enableWebSocketServerCheckBox->setChecked(conf->ServerEnabled);
+	if (IsServerOffBySafeMode()) {
+		ui->enableWebSocketServerCheckBox->setChecked(false);
+	} else {
+		ui->enableWebSocketServerCheckBox->setChecked(conf->ServerEnabled);
+	}
 	ui->enableSystemTrayAlertsCheckBox->setChecked(conf->AlertsEnabled);
 	ui->enableDebugLoggingCheckBox->setChecked(conf->DebugEnabled);
 	ui->serverPortSpinBox->setValue(conf->ServerPort);
@@ -181,6 +192,8 @@ void SettingsDialog::SaveFormData()
 			return;
 		}
 	}
+
+	ClearServerOffBySafeMode();
 
 	bool needsRestart = (conf->ServerEnabled != ui->enableWebSocketServerCheckBox->isChecked()) ||
 			    (conf->ServerPort != ui->serverPortSpinBox->value()) ||
@@ -260,7 +273,8 @@ void SettingsDialog::FillSessionTable()
 		invalidateButtonLayout->setContentsMargins(0, 0, 0, 0);
 		invalidateButtonWidget->setLayout(invalidateButtonLayout);
 		ui->websocketSessionTable->setCellWidget(i, 4, invalidateButtonWidget);
-		connect(invalidateButton, &QPushButton::clicked, [=]() { webSocketServer->InvalidateSession(session.hdl); });
+		connect(invalidateButton, &QPushButton::clicked,
+			[webSocketServer, session]() { webSocketServer->InvalidateSession(session.hdl); });
 
 		i++;
 	}
